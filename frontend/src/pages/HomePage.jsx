@@ -97,40 +97,40 @@ useEffect(() => {
   }, [debouncedSearchQuery]);
 
   return (
-    <div className="bg-[#FFF5E4]">
+    <div className="bg-gray-900 text-gray-200">
       <MyHeader />
-      <div className="w-[80%] mx-auto bg-[#f8e6d1] p-6 min-h-screen border-4 border-[#8d5a42]/70 border-t-0 rounded-md shadow-2xl">
+      <div className="w-[80%] mx-auto bg-gray-800 p-6 min-h-screen border-4 border-t-0 border-gray-700 rounded-md shadow-lg">
         {/* Top Section */}
         <div className="flex justify-between items-center py-4">
-          <h2 className="text-2xl font-semibold text-[#5b3220] hidden md:block">
+          <h2 className="text-2xl font-semibold text-gray-100 hidden md:block">
             Total Collection Value: {collectionValue}
           </h2>
-          <h2 className="text-2xl font-semibold text-[#5b3220] md:hidden">
+          <h2 className="text-2xl font-semibold text-gray-100 md:hidden">
             {collectionValue}
           </h2>
           <div className="relative w-1/3">
             <input
               type="text"
               placeholder="Search cards..."
-              className="w-full p-2 border border-[#8d5a42] rounded-md focus:outline-none text-[#5b3220]"
+              className="w-full p-2 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-100"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#5b3220] text-lg hover:cursor-pointer hover:text-[#8d5a42]"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg hover:cursor-pointer hover:text-gray-200"
               >
                 <X />
               </button>
             )}
           </div>
         </div>
-
+  
         {/* Search Results Section with Grid Layout */}
         {debouncedSearchQuery && (
           <div
-            className="p-5 bg-white rounded-lg border border-[#8d5a42] mt-7 opacity-0 transform transition-all duration-500 ease-in-out"
+            className="p-5 bg-gray-700 rounded-lg border border-gray-600 mt-7 opacity-0 transform transition-all duration-500 ease-in-out"
             style={{
               animation: "fadeIn 0.5s forwards, slideDownSearch 0.5s forwards",
               maxHeight: "750px", // Increased from 500px → 750px (1.5x)
@@ -139,7 +139,7 @@ useEffect(() => {
             }}
           >
             <div
-              className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-5 overflow-y-auto scrollbar-thin text-[#5b3220]"
+              className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-5 overflow-y-auto scrollbar-thin text-gray-100"
               style={{
                 maxHeight: "600px", // Increased from 400px → 600px (1.5x)
                 paddingBottom: "8px",
@@ -157,22 +157,22 @@ useEffect(() => {
             </div>
           </div>
         )}
-
+  
         {/* Your Cards Section */}
-        <div className="mt-6 p-6 bg-[#e4c1a1] rounded-lg border-2 border-[#8d5a42]">
-          <h2 className="text-2xl font-extrabold text-[#5b3220] tracking-wide">
+        <div className="mt-6 p-6 bg-gray-700 rounded-lg border-2 border-gray-600">
+          <h2 className="text-2xl font-extrabold text-gray-100 tracking-wide">
             YOUR CARDS
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-5 mt-4">
             {cardInfo.map((card) => (
-                <Card
-                  id={card.id}
-                  name={card.name}
-                  image={card.image}
-                  price={card.avg7}
-                  deleteButton={true}
-                />
-                 ))}
+              <Card
+                id={card.id}
+                name={card.name}
+                image={card.image}
+                price={card.avg7}
+                deleteButton={true}
+              />
+            ))}
           </div>
         </div>
       </div>

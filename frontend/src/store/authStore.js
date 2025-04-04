@@ -99,15 +99,24 @@ export const useAuthStore = create((set) => ({
       }
     }),
   deleteCardFromCollection: (cardId) =>
-    set((state) => ({
-      user: {
-        ...state.user, // Spread to maintain the rest of the user's data
-        cardCollection: state.user.cardCollection.filter(
-          (card) => card.cardId !== cardId
-        ), // Filter out the card
-      },
-    })),
-    
+    set((state) => {
+      const updatedCollection = state.user.cardCollection.map((card) =>
+        card.cardId === cardId ? { ...card, quantity: card.quantity - 1 } : card
+      );
+
+      // Filter out cards with zero quantity
+      const filteredCollection = updatedCollection.filter(
+        (card) => card.quantity > 0
+      );
+
+      return {
+        user: {
+          ...state.user,
+          cardCollection: filteredCollection, // Ensure a new reference for React to detect change
+        },
+      };
+    }),
+
   updateCollectionValue: () =>
     set((state) => {
       const newValue = state.user.cardCollection.reduce(
