@@ -22,21 +22,16 @@ Here is a sample .env file.
 
 ---------------------------
 
-#PORT
 PORT = 5500
 // Keep it as 5500 for the time being, will update this to be dynamic eventually.
 
-#MONGODB
 MONGODB_URI="YOUR_MONGODB_DATABASE"
 
-# JWT AUTH
 JWT_SECRET="YOUR_JWT_SECRET"
 JWT_EXPIRES_IN="1d"
 
-# COOKIE EXPIRY TIME
 COOKIE_EXPIRY_TIME = 86400000
 
-# POKEMON TCG API
 PKMN_API="YOUR_API"
 
 ----------------------------
