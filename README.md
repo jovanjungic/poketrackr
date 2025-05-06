@@ -1,38 +1,65 @@
-# PokeTrackr
+# 🧩 Pokémon TCG Collection Tracker (MERN Stack)
 
-PokeTrackr is a personal Pokémon TCG (Trading Card Game) collection tracker.  
-Users can search for cards, add them to their collection, and view the total estimated value based on recent market data.
+This is a full-stack MERN application for tracking your personal Pokémon TCG card collection. It lets users log in, search for cards using an external API, and save the ones they own, along with quantities and value estimates.
 
-## 🚧 Status
+It is still a big work in progress, i realize the issues I have made only after finishing most of the app. It makes too many requests to an external API, I can cut it down, and I will, and also the UI is still a huge work in progress, while it does work it will need work to make it prettier.
 
-This app is currently under development and not yet deployed.  
-There are a few bugs and missing features that need to be resolved before hosting and deploying it.
+---
 
-## 🧪 Want to try it locally?
+## 🌟 Features
 
-You're welcome to clone the repo and run the app on your own machine for testing or development purposes.
+- 🔐 JWT authentication (login/register)
+- 🧠 Zustand for frontend state management
+- 📦 Add cards to your collection with quantity tracking
+- 💰 Automatically calculates total collection value
+- 🔎 Search functionality 
+- 🌐 Uses external Pokémon TCG API
+- ⚙️ Custom backend API with protected routes
+- 🪄 Clean UI with responsive design
 
-### Prerequisites
+---
 
-- Node.js and npm
-- MongoDB (local or Atlas)
-- A `.env` file for backend config (e.g. database URI, JWT secret)
+## 📦 Tech Stack
 
-Here is a sample .env file.
+**Frontend:** React, Zustand, Axios, React Router  
+**Backend:** Node.js, Express.js, MongoDB, Mongoose, JWT, bcrypt  
+**External API:** [Pokémon TCG API](https://pokemontcg.io/)
 
----------------------------
+---
 
-PORT = 5500
-// Keep it as 5500 for the time being, will update this to be dynamic eventually.
+## 🛠️ Getting Started
 
-MONGODB_URI="YOUR_MONGODB_DATABASE"
+To run the project locally, follow these steps:
 
-JWT_SECRET="YOUR_JWT_SECRET"
 
-JWT_EXPIRES_IN="1d"
+#### 1. Clone the repository
+```
+git clone https://github.com/yourusername/pokemon-tcg-tracker.git
+cd pokemon-tcg-tracker
+```
 
-COOKIE_EXPIRY_TIME = 86400000
+#### 2. Install backend dependencies
+```
+cd backend
+npm install
+```
 
-PKMN_API="YOUR_API"
+#### 3. Install frontend dependencies
+```
+cd ../frontend
+npm install
+```
 
-----------------------------
+#### 4. Set up environment variables
+There is a example env file in the project that will guide you.
+
+#### 5. Start the backend
+```
+cd ../backend
+npm run dev
+```
+#### 6. Start the frontend (in a separate terminal)
+```
+cd ../frontend
+npm run dev
+```
