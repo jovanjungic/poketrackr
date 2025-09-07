@@ -46,7 +46,8 @@ export const register = async (req, res, next) => {
         Date.now() + parseInt(process.env.COOKIE_EXPIRY_TIME, 10)
       ),
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
     });
 
     // Commit the transaction and end the session.
@@ -101,7 +102,8 @@ export const login = async (req, res, next) => {
         Date.now() + parseInt(process.env.COOKIE_EXPIRY_TIME, 10)
       ),
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
     });
 
     // Return a successful response.
@@ -124,7 +126,7 @@ export const logout = (req, res, next) => {
     // Clear the JWT token from the cookie.
     res.clearCookie("token", {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: "strict",
     });
     res.json({ message: "Logged out successfully" });

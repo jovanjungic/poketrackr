@@ -4,6 +4,9 @@ import { useAuthStore } from "../store/authStore";
 import axios from "axios";
 import toast from "react-hot-toast";
 
+// API base URL - can be moved to environment variables later
+const API_BASE_URL = "http://localhost:5500";
+
 const Card = ({
   id,
   name,
@@ -25,7 +28,7 @@ const Card = ({
       return;
     }
     try {
-      await axios.delete("http://localhost:5500/api/collection/", {
+      await axios.delete(`${API_BASE_URL}/api/collection/`, {
         data: { cardId: id },
         withCredentials: true,
       });
@@ -47,7 +50,7 @@ const Card = ({
 
     try {
       await axios.put(
-        "http://localhost:5500/api/collection/",
+        `${API_BASE_URL}/api/collection/`,
         { cardId: id, cardValue: price },
         { withCredentials: true }
       );

@@ -2,6 +2,9 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 
+// API base URL - can be moved to environment variables later
+const API_BASE_URL = "http://localhost:5500";
+
 export const useAuthStore = create((set) => ({
   user: null,
   isRegistering: false,
@@ -12,7 +15,7 @@ export const useAuthStore = create((set) => ({
     set({ isRegistering: true });
     try {
       const response = await axios.post(
-        "http://localhost:5500/api/auth/register",
+        `${API_BASE_URL}/api/auth/register`,
         credentials,
         { withCredentials: true }
       );
@@ -30,7 +33,7 @@ export const useAuthStore = create((set) => ({
     set({ isLoggingIn: true });
     try {
       const response = await axios.post(
-        "http://localhost:5500/api/auth/login",
+        `${API_BASE_URL}/api/auth/login`,
         credentials,
         { withCredentials: true }
       );
@@ -47,7 +50,7 @@ export const useAuthStore = create((set) => ({
   logout: async () => {
     set({ isLoggingOut: true });
     try {
-      await axios.get("http://localhost:5500/api/auth/logout", {
+      await axios.get(`${API_BASE_URL}/api/auth/logout`, {
         withCredentials: true,
       });
       set({ user: null, isLoggingOut: false });
@@ -60,10 +63,10 @@ export const useAuthStore = create((set) => ({
   authCheck: async () => {
     set({ isCheckingAuth: true });
     try {
-      const response = await axios.get("http://localhost:5500/api/auth/check", {
+      const response = await axios.get(`${API_BASE_URL}/api/auth/check`, {
         withCredentials: true,
       });
-      set({ user: response.data.user, isCheckingAuth: false });
+      set({ user: response.data.data.user, isCheckingAuth: false });
     } catch (error) {
       set({ user: null, isCheckingAuth: false });
       console.error(error);
@@ -71,35 +74,43 @@ export const useAuthStore = create((set) => ({
   },
   addCardToCollection: (newCard) =>
     set((state) => {
+      if (!state.user) return state;
+      
       const existingCardIndex = state.user.cardCollection.findIndex(
         (card) => card.cardId === newCard.cardId
       );
 
+      let updatedCollection;
       if (existingCardIndex !== -1) {
         // If card exists, update quantity
-        const updatedCollection = [...state.user.cardCollection];
+        updatedCollection = [...state.user.cardCollection];
         updatedCollection[existingCardIndex].quantity += 1;
-        return {
-          user: {
-            ...state.user,
-            cardCollection: updatedCollection,
-          },
-        };
+        updatedCollection[existingCardIndex].cardValue = newCard.cardValue;
       } else {
         // If card is new, add it
-        return {
-          user: {
-            ...state.user,
-            cardCollection: [
-              ...state.user.cardCollection,
-              { ...newCard, quantity: 1 },
-            ],
-          },
-        };
+        updatedCollection = [
+          ...state.user.cardCollection,
+          { ...newCard, quantity: 1 },
+        ];
       }
+
+      // Recalculate collection value
+      const newValue = updatedCollection.reduce(
+        (acc, card) => acc + (card.cardValue || 0) * card.quantity, 0
+      );
+
+      return {
+        user: {
+          ...state.user,
+          cardCollection: updatedCollection,
+          cardCollectionValue: newValue,
+        },
+      };
     }),
   deleteCardFromCollection: (cardId) =>
     set((state) => {
+      if (!state.user) return state;
+
       const updatedCollection = state.user.cardCollection.map((card) =>
         card.cardId === cardId ? { ...card, quantity: card.quantity - 1 } : card
       );
@@ -109,10 +120,16 @@ export const useAuthStore = create((set) => ({
         (card) => card.quantity > 0
       );
 
+      // Recalculate collection value
+      const newValue = filteredCollection.reduce(
+        (acc, card) => acc + (card.cardValue || 0) * card.quantity, 0
+      );
+
       return {
         user: {
           ...state.user,
-          cardCollection: filteredCollection, // Ensure a new reference for React to detect change
+          cardCollection: filteredCollection,
+          cardCollectionValue: newValue,
         },
       };
     }),

@@ -7,6 +7,9 @@ import toast from "react-hot-toast";
 import Card from "../components/Card";
 import { X } from "lucide-react";
 
+// API base URL - can be moved to environment variables later
+const API_BASE_URL = "http://localhost:5500";
+
 const HomePage = () => {
   const { user } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,7 +21,7 @@ const HomePage = () => {
   const fetchFromApi = async (query) => {
     try {
       const response = await axios.get(
-        `http://localhost:5500/api/collection/${query}`,
+        `${API_BASE_URL}/api/collection/${query}`,
         {
           withCredentials: true,
         }
@@ -34,12 +37,15 @@ const HomePage = () => {
    const showCurrentCards = async () => {     
     try {
         const cardArray = () => {
-            const cardIds = user.cardCollection.map(card => card.cardId); // Extract all card IDs
+            // Filter out cards with quantity 0 and extract card IDs
+            const cardIds = user.cardCollection
+              .filter(card => card.quantity > 0)
+              .map(card => card.cardId);
              return cardIds;
             }
                 console.log(user.cardCollection)
                 console.log(cardArray());
-             const response = await axios.put("http://localhost:5500/api/collection/cardInfo", {
+             const response = await axios.put(`${API_BASE_URL}/api/collection/cardInfo`, {
                 cardIds: cardArray(),
              }, {
                 withCredentials: true,
@@ -53,19 +59,24 @@ const HomePage = () => {
 };
 
 useEffect(() => {
-    if (user?.cardCollection.length > 0) {
+    if (user?.cardCollection && user.cardCollection.length > 0) {
       showCurrentCards();
+    } else if (user?.cardCollection && user.cardCollection.length === 0) {
+      // Clear cardInfo when collection is empty
+      setCardInfo([]);
     }
-    setCollectionValue(user.cardCollectionValue.toFixed(2) + "$");
-  }, [user?.cardCollection, user.cardCollectionValue]); // Removed collectionValue, added showCurrentCards
+  }, [user?.cardCollection]); // Trigger when collection changes (including quantity changes)
 
 useEffect(() => {
-    if (user?.cardCollection) {
-      setCollectionValue(user.cardCollection.reduce(
-        (acc, card) => acc + card.cardValue * card.quantity, 0
-      ).toFixed(2) + "$");
+    if (user?.cardCollectionValue !== undefined) {
+      setCollectionValue(user.cardCollectionValue.toFixed(2) + "$");
+    } else if (user?.cardCollection) {
+      const calculatedValue = user.cardCollection.reduce(
+        (acc, card) => acc + (card.cardValue || 0) * card.quantity, 0
+      );
+      setCollectionValue(calculatedValue.toFixed(2) + "$");
     }
-  }, [user.cardCollection]); // Fix dependency
+  }, [user?.cardCollectionValue, user?.cardCollection]);
 
   // This will update the debounced search query after a delay
   useEffect(() => {
@@ -147,6 +158,7 @@ useEffect(() => {
             >
               {searchResults.map((card) => (
                 <Card
+                  key={card.id}
                   id={card.id}
                   name={card.name}
                   image={card.images.small}
@@ -166,6 +178,7 @@ useEffect(() => {
           <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-5 mt-4">
             {cardInfo.map((card) => (
               <Card
+                key={card.id}
                 id={card.id}
                 name={card.name}
                 image={card.image}

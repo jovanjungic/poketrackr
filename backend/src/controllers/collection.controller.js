@@ -8,8 +8,20 @@ import mongoose from "mongoose";
 // Update item in user's collection
 export const putCard = async (req, res, next) => {
   try {
-    const cardId = req.body.cardId;
-    const cardValue = req.body.cardValue || 0;
+    const { cardId, cardValue = 0 } = req.body;
+
+    // Input validation
+    if (!cardId || typeof cardId !== 'string' || cardId.trim().length === 0) {
+      const error = new Error("Valid cardId is required");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (typeof cardValue !== 'number' || cardValue < 0) {
+      const error = new Error("Card value must be a non-negative number");
+      error.statusCode = 400;
+      throw error;
+    }
 
     // If the card is already in the user's collection, increment its quantity
     const updatedUser = await User.findOneAndUpdate(
@@ -44,7 +56,14 @@ export const putCard = async (req, res, next) => {
 // Delete item from user's collection
 export const deleteCard = async (req, res, next) => {
   try {
-    const cardId = req.body.cardId;
+    const { cardId } = req.body;
+
+    // Input validation
+    if (!cardId || typeof cardId !== 'string' || cardId.trim().length === 0) {
+      const error = new Error("Valid cardId is required");
+      error.statusCode = 400;
+      throw error;
+    }
 
     // Find the index of the card in the user's collection
     const user = await User.findById(req.user._id);
@@ -86,11 +105,30 @@ const fetchCardValues = async (cards) => {
 
   // Map over the cards in the user's collection and fetch the current value of each
   const promises = cards.map(async (card) => {
-    const response = await api.get(`/${card.cardId}`);
-    return {
-      cardId: card.cardId,
-      cardValue: response.data.data.cardmarket.prices.avg7,
-    };
+    try {
+      const response = await api.get(`/${card.cardId}`);
+      const cardData = response.data?.data;
+      
+      if (!cardData) {
+        console.warn(`No data found for card ${card.cardId}`);
+        return {
+          cardId: card.cardId,
+          cardValue: card.cardValue || 0, // Keep existing value if API fails
+        };
+      }
+
+      const avg7Price = cardData.cardmarket?.prices?.avg7;
+      return {
+        cardId: card.cardId,
+        cardValue: avg7Price || card.cardValue || 0,
+      };
+    } catch (error) {
+      console.warn(`Failed to fetch price for card ${card.cardId}:`, error.message);
+      return {
+        cardId: card.cardId,
+        cardValue: card.cardValue || 0, // Keep existing value if API fails
+      };
+    }
   });
   return await Promise.all(promises);
 };

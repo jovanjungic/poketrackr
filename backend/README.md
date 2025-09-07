@@ -1,38 +1,70 @@
-# Express API Starter
+# PokeTrackr Backend API
 
-How to use this template:
+A Pokemon collection tracking API built with Express.js and MongoDB.
 
-```sh
-npx create-express-api --directory my-api-name
+## Prerequisites
+
+Before running this application, you'll need to set up the following services:
+
+### 1. MongoDB Database
+Choose one option:
+
+**Option A: MongoDB Atlas (Recommended - Free)**
+1. Go to [MongoDB Atlas](https://www.mongodb.com/atlas)
+2. Create a free account and cluster
+3. Get your connection string
+
+**Option B: Local MongoDB**
+1. Install MongoDB locally
+2. Start the MongoDB service
+
+**Option C: Docker MongoDB**
+```bash
+docker run -d -p 27017:27017 --name mongodb mongo
 ```
 
-Includes API Server utilities:
-
-* [morgan](https://www.npmjs.com/package/morgan)
-  * HTTP request logger middleware for node.js
-* [helmet](https://www.npmjs.com/package/helmet)
-  * Helmet helps you secure your Express apps by setting various HTTP headers. It's not a silver bullet, but it can help!
-* [dotenv](https://www.npmjs.com/package/dotenv)
-  * Dotenv is a zero-dependency module that loads environment variables from a `.env` file into `process.env`
-* [cors](https://www.npmjs.com/package/cors)
-  * CORS is a node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options.
-
-Development utilities:
-
-* [nodemon](https://www.npmjs.com/package/nodemon)
-  * nodemon is a tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected.
-* [eslint](https://www.npmjs.com/package/eslint)
-  * ESLint is a tool for identifying and reporting on patterns found in ECMAScript/JavaScript code.
-* [jest](https://www.npmjs.com/package/jest)
-  * Jest is a delightful JavaScript Testing Framework with a focus on simplicity.
-* [supertest](https://www.npmjs.com/package/supertest)
-  * HTTP assertions made easy via superagent.
+### 2. Pokemon TCG API Key
+1. Go to [Pokemon TCG API](https://pokemontcg.io/)
+2. Sign up for a free account
+3. Get your API key
 
 ## Setup
 
-```
+1. **Install dependencies:**
+```bash
 npm install
 ```
+
+2. **Create environment file:**
+```bash
+cp example.env .env
+```
+
+3. **Configure your environment variables:**
+Edit the `.env` file with your actual values:
+- `MONGODB_URI`: Your MongoDB connection string
+- `JWT_SECRET`: A secure random string for JWT tokens
+- `PKMN_API`: Your Pokemon TCG API key
+
+4. **Start the development server:**
+```bash
+npm run dev
+```
+
+## Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `PORT` | Server port (default: 5500) | No |
+| `MONGODB_URI` | MongoDB connection string | Yes |
+| `JWT_SECRET` | Secret key for JWT tokens | Yes |
+| `JWT_EXPIRES_IN` | JWT token expiration time | No |
+| `COOKIE_EXPIRY_TIME` | Cookie expiration in milliseconds | No |
+| `PKMN_API` | Pokemon TCG API key | Yes |
+
+## Security Note
+
+Never commit your `.env` file to version control. The `.env` file is already included in `.gitignore` to prevent accidental commits.
 
 ## Lint
 

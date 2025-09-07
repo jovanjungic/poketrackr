@@ -10,7 +10,16 @@ router.get("/logout", authorize, logout); // Log out a user if a user is logged 
 router.get("/check", authorize, (req, res) => {
     res.json({
       success: true,
-      user: req.user,
+      message: "User authenticated successfully",
+      data: {
+        user: {
+          id: req.user._id,
+          username: req.user.username,
+          email: req.user.email,
+          cardCollection: req.user.cardCollection,
+          cardCollectionValue: req.user.cardCollectionValue
+        }
+      }
     });
   });
 
